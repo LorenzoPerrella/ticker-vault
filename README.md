@@ -43,6 +43,14 @@ uv run alembic upgrade head     # applica le migrazioni
 Per personalizzare le credenziali locali, copia `.env.secret.example` in
 `.env.secret` (gitignored) — vedi il file per i dettagli.
 
-Istruzioni per l'avvio dell'app e per le altre modalità di esecuzione (container,
-k8s locale) verranno aggiunte man mano che quelle fasi sono pronte — vedi
+### Avvio app (dev loop locale)
+
+```bash
+uv run uvicorn price_service.main:app --reload
+```
+
+→ [http://localhost:8000/docs](http://localhost:8000/docs) (Swagger UI, `/api/v1/prices`).
+
+Istruzioni per le altre modalità di esecuzione (container, k8s locale)
+verranno aggiunte man mano che quelle fasi sono pronte — vedi
 [`plan.md`](plan.md) per i dettagli.
