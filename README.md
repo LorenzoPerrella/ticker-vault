@@ -1,5 +1,7 @@
 # ticker-vault
 
+[![CI](https://github.com/LorenzoPerrella/ticker-vault/actions/workflows/ci.yml/badge.svg)](https://github.com/LorenzoPerrella/ticker-vault/actions/workflows/ci.yml)
+
 API CRUD asincrona per prezzi di titoli finanziari — progetto da portfolio.
 
 Stack: **FastAPI** + **SQLAlchemy 2.0 async** (`asyncpg`) + **PostgreSQL** + **Alembic**,
@@ -12,7 +14,7 @@ containerizzato e orchestrato su **Kubernetes** (Kustomize, cluster locale via `
 ## Stato
 
 - [x] Bootstrap progetto (`uv`, `ruff`, `mypy`, `pre-commit`)
-- [ ] CI GitHub Actions
+- [x] CI GitHub Actions (lint + type-check)
 - [ ] Modelli dati e migrazioni Alembic
 - [ ] API CRUD `/api/v1/prices`
 - [ ] Test unitari e di integrazione
