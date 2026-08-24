@@ -15,7 +15,7 @@ containerizzato e orchestrato su **Kubernetes** (Kustomize, cluster locale via `
 
 - [x] Bootstrap progetto (`uv`, `ruff`, `mypy`, `pre-commit`)
 - [x] CI GitHub Actions (lint + type-check)
-- [ ] Modelli dati e migrazioni Alembic
+- [x] Modelli dati e migrazioni Alembic
 - [ ] API CRUD `/api/v1/prices`
 - [ ] Test unitari e di integrazione
 - [ ] Containerizzazione (Dockerfile, docker-compose)
@@ -33,6 +33,16 @@ uv run mypy          # type-check
 uv run pre-commit install  # (opzionale) hook pre-commit locali
 ```
 
-Istruzioni per l'avvio dell'app e per le tre modalità di esecuzione (dev loop,
-container, k8s locale) verranno aggiunte man mano che quelle fasi sono pronte —
-vedi [`plan.md`](plan.md) per i dettagli.
+### Database
+
+```bash
+docker compose up -d postgres   # Postgres 17 in locale (default dev già validi, nessun .env richiesto)
+uv run alembic upgrade head     # applica le migrazioni
+```
+
+Per personalizzare le credenziali locali, copia `.env.secret.example` in
+`.env.secret` (gitignored) — vedi il file per i dettagli.
+
+Istruzioni per l'avvio dell'app e per le altre modalità di esecuzione (container,
+k8s locale) verranno aggiunte man mano che quelle fasi sono pronte — vedi
+[`plan.md`](plan.md) per i dettagli.
