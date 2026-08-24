@@ -16,7 +16,7 @@ containerizzato e orchestrato su **Kubernetes** (Kustomize, cluster locale via `
 - [x] Bootstrap progetto (`uv`, `ruff`, `mypy`, `pre-commit`)
 - [x] CI GitHub Actions (lint + type-check)
 - [x] Modelli dati e migrazioni Alembic
-- [ ] API CRUD `/api/v1/prices`
+- [x] API CRUD `/api/v1/prices` (+ `/health`, `/ready`)
 - [ ] Test unitari e di integrazione
 - [ ] Containerizzazione (Dockerfile, docker-compose)
 - [ ] Manifest Kubernetes (Kustomize, overlay dev/prod)
