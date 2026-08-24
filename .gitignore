@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.Python
+
+# Ambienti virtuali / uv
+.venv/
+
+# Cache tool
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Segreti locali (mai committati)
+.env
+.env.secret
+
+# Docker
+*.pid
