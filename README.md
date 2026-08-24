@@ -29,7 +29,7 @@ Richiede [`uv`](https://docs.astral.sh/uv/) installato.
 ```bash
 uv sync              # crea il virtualenv e installa le dipendenze
 uv run ruff check .  # lint
-uv run mypy src      # type-check
+uv run mypy          # type-check
 uv run pre-commit install  # (opzionale) hook pre-commit locali
 ```
 
