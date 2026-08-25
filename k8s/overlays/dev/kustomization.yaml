@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Impostato qui, non in base: deve stare allo stesso livello del
+# secretGenerator sotto. Il transformer che riscrive i nomi dei Secret
+# generati (hash suffix) richiede che risorsa generata e risorsa che la
+# referenzia risultino nello stesso namespace — se il namespace fosse
+# impostato solo in base, il Secret generato qui resterebbe "senza
+# namespace" ai fini del confronto e envFrom.secretRef.name non verrebbe
+# aggiornato al nome con hash (CreateContainerConfigError: secret
+# "db-credentials" not found, verificato praticamente su kind).
+namespace: ticker-vault
+
+resources:
+  - ../../base
+
+# .env.secret locale a questa cartella (gitignored, vedi .env.secret.example
+# qui accanto) — Kustomize non permette a secretGenerator di leggere file
+# fuori dalla propria directory. Stesse credenziali del file alla radice del
+# repo (usato da app locale/docker-compose) per convenzione, non condivisione
+# diretta: le tre credenziali sono l'unico contratto che eventuali altri
+# consumer nello stesso cluster devono replicare (vedi nota in plan.md).
+secretGenerator:
+  - name: db-credentials
+    envs:
+      - .env.secret

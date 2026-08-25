@@ -20,7 +20,7 @@ containerizzato e orchestrato su **Kubernetes** (Kustomize, cluster locale via `
 - [x] Test unitari (repository e API, mockati)
 - [x] Test di integrazione (testcontainers)
 - [x] Containerizzazione (Dockerfile, docker-compose)
-- [ ] Manifest Kubernetes (Kustomize, overlay dev/prod)
+- [x] Manifest Kubernetes (Kustomize, overlay dev/prod)
 - [ ] Documentazione architetturale completa
 
 ## Sviluppo locale
@@ -64,5 +64,31 @@ Costruisce l'immagine, avvia Postgres, esegue le migrazioni (servizio `migrate`,
 one-shot) e solo dopo avvia l'app — stessa API su
 [http://localhost:8000/docs](http://localhost:8000/docs), ma tutto containerizzato.
 
-Istruzioni per il deploy k8s locale verranno aggiunte man mano che quella fase
-è pronta — vedi [`plan.md`](plan.md) per i dettagli.
+### Deploy k8s locale (kind)
+
+```bash
+kind create cluster --name ticker-vault
+docker build -t price-service:local .
+kind load docker-image price-service:local --name ticker-vault
+
+cp k8s/overlays/dev/.env.secret.example k8s/overlays/dev/.env.secret  # prima volta
+kubectl apply -k k8s/overlays/dev
+
+kubectl -n ticker-vault wait --for=condition=complete job/price-service-migrate --timeout=60s
+kubectl -n ticker-vault rollout status deployment/price-service
+
+kubectl -n ticker-vault port-forward svc/price-service 8000:8000
+```
+
+→ [http://localhost:8000/docs](http://localhost:8000/docs).
+
+Per un redeploy immediato dopo aver ricostruito l'immagine (stesso tag
+`:local`, quindi il testo del manifest non cambia): `kubectl delete job -n
+ticker-vault price-service-migrate` prima di riapplicare (il Job è immutabile),
+poi `kubectl rollout restart deployment/price-service -n ticker-vault` per far
+ripartire i pod con l'immagine aggiornata.
+
+`kubectl kustomize k8s/overlays/prod` è validato in CI ma non pensato per un
+deploy reale su questo cluster locale (punta a un'immagine placeholder su un
+registry inesistente) — dimostra la struttura dell'overlay, non un ambiente
+prod funzionante.

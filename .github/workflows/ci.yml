@@ -76,3 +76,22 @@ jobs:
           curl -sf http://localhost:8000/health
           docker logs smoke
           docker rm -f smoke
+
+  validate-k8s-manifests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # .env.secret è gitignored: qui basta un file fittizio, kustomize build
+      # non tocca un cluster reale né legge i valori a fini di validazione.
+      - name: Create dummy .env.secret for kustomize build
+        run: |
+          for dir in k8s/overlays/dev k8s/overlays/prod; do
+            printf 'POSTGRES_USER=ci\nPOSTGRES_PASSWORD=ci\nPOSTGRES_DB=ci\n' > "$dir/.env.secret"
+          done
+
+      - name: Validate dev overlay
+        run: kubectl kustomize k8s/overlays/dev
+
+      - name: Validate prod overlay
+        run: kubectl kustomize k8s/overlays/prod
