@@ -193,7 +193,14 @@ precisione in un round-trip.
 | `GET` | `/health` | Liveness — non tocca il DB |
 | `GET` | `/ready` | Readiness — `503` se il DB non risponde |
 
-Schema interattivo completo su `/docs` una volta avviata l'app.
+Schema interattivo completo su `/docs` una volta avviata l'app:
+
+<img src="docs/images/swagger-overview.png" alt="Swagger UI: elenco endpoint" width="700">
+
+`GET /api/v1/prices` eseguito da Swagger UI ("Try it out" → "Execute") contro
+dati reali:
+
+<img src="docs/images/swagger-get-prices.png" alt="Swagger UI: risposta reale di GET /api/v1/prices" width="700">
 
 ## Trade-off consapevoli
 
