@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# namespace: intenzionalmente non qui — vedi commento negli overlay.
+
+resources:
+  - namespace.yaml
+  - postgres.yaml
+  - app.yaml
+  - migration-job.yaml

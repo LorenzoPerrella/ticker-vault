@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: price-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: price-service
+  template:
+    metadata:
+      labels:
+        app: price-service
+    spec:
+      containers:
+        - name: price-service
+          image: price-service:local
+          ports:
+            - containerPort: 8000
+          env:
+            # Nome del Service Postgres qui sotto: risolto via DNS interno del
+            # namespace, non hardcoded a un IP. Non un segreto: esplicito qui,
+            # non nel Secret (che porta solo user/password/db, Fase 6 — vedi
+            # nota in plan.md sull'estendibilità verso altri consumer).
+            - name: POSTGRES_HOST
+              value: postgres
+            - name: POSTGRES_PORT
+              value: "5432"
+          envFrom:
+            - secretRef:
+                name: db-credentials
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: price-service
+  labels:
+    app: price-service
+spec:
+  selector:
+    app: price-service
+  ports:
+    - port: 8000
+      targetPort: 8000

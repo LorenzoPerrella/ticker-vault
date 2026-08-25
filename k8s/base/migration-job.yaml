@@ -1,0 +1,33 @@
+# Job dedicato pre-rollout: le migrazioni non girano mai dai pod app (vedi
+# plan.md). Con kubectl puro (nessun hook Helm/ArgoCD) l'ordine "prima le
+# migrazioni, poi il rollout dell'app" è una procedura di deploy documentata
+# (README), non automatica: kubectl apply -k ... && kubectl wait --for=condition=complete
+# job/price-service-migrate && kubectl rollout status deployment/price-service.
+#
+# ttlSecondsAfterFinished ripulisce il Job a job completato, così una
+# successiva kubectl apply -k (a distanza di qualche minuto) può ricrearlo
+# senza scontrarsi con l'immutabilità del Job precedente con lo stesso nome —
+# per un redeploy immediato serve invece `kubectl delete job price-service-migrate`
+# a mano prima di riapplicare.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: price-service-migrate
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: price-service:local
+          command: ["alembic", "upgrade", "head"]
+          env:
+            - name: POSTGRES_HOST
+              value: postgres
+            - name: POSTGRES_PORT
+              value: "5432"
+          envFrom:
+            - secretRef:
+                name: db-credentials
