@@ -82,19 +82,19 @@ verificato automaticamente. Il workflow `.github/workflows/ci.yml` viene poi
 commit CI separato a fine percorso) — così ogni pezzo nuovo è coperto fin da
 subito e la cronologia mostra CI verde crescere insieme al codice.
 
-- [ ] `chore: bootstrap project with uv, ruff, mypy, pre-commit` — Fase 0: pyproject.toml, uv.lock, config ruff/mypy, pre-commit hooks, .gitignore, README scheletro
-- [ ] `ci: add GitHub Actions workflow (lint + type-check)` — scheletro minimo, gira da qui in poi su ogni push/PR
-- [ ] `feat(db): add async SQLAlchemy models and Alembic setup` — Fase 1: `db/models.py`, `db/base.py`, `alembic.ini`, `migrations/env.py`
-- [ ] `feat(db): add initial migration for prices table` — Fase 1: prima revisione Alembic + `docker-compose.yml` con solo Postgres
-- [ ] `feat(repo): add price repository and pydantic schemas` — Fase 2
-- [ ] `feat(api): add FastAPI CRUD endpoints for prices` — Fase 3: app factory, deps, router `/api/v1/prices`
-- [ ] `feat(api): add health and readiness endpoints` — Fase 3
-- [ ] `test: add unit tests for repository and API` + estendo CI con job unit test — Fase 4 (repository mockato)
-- [ ] `test: add integration tests with testcontainers` + estendo CI con job integration test (Docker disponibile nei runner Actions) — Fase 4
-- [ ] `chore(docker): add multi-stage Dockerfile and extend docker-compose` + estendo CI con job build immagine — Fase 5
-- [ ] `chore(k8s): add base Kustomize manifests` — Fase 6: namespace, postgres (StatefulSet+PVC+Service), app (Deployment+Service), migration Job
-- [ ] `chore(k8s): add dev/prod overlays with secret generator` + estendo CI con validazione `kubectl kustomize build` — Fase 6
-- [ ] `docs: add architecture README and portfolio polish` — Fase 8
+- [x] `chore: bootstrap project with uv, ruff, mypy, pre-commit` — Fase 0: pyproject.toml, uv.lock, config ruff/mypy, pre-commit hooks, .gitignore, README scheletro
+- [x] `ci: add GitHub Actions workflow (lint + type-check)` — scheletro minimo, gira da qui in poi su ogni push/PR
+- [x] `feat(db): add async SQLAlchemy models and Alembic setup` — Fase 1: `db/models.py`, `db/base.py`, `alembic.ini`, `migrations/env.py`
+- [x] `feat(db): add initial migration for prices table` — Fase 1: prima revisione Alembic + `docker-compose.yml` con solo Postgres
+- [x] `feat(repo): add price repository and pydantic schemas` — Fase 2
+- [x] `feat(api): add FastAPI CRUD endpoints for prices` — Fase 3: app factory, deps, router `/api/v1/prices`
+- [x] `feat(api): add health and readiness endpoints` — Fase 3
+- [x] `test: add unit tests for repository and API` + estendo CI con job unit test — Fase 4 (repository mockato)
+- [x] `test: add integration tests with testcontainers` + estendo CI con job integration test (Docker disponibile nei runner Actions) — Fase 4
+- [x] `chore(docker): add multi-stage Dockerfile and extend docker-compose` + estendo CI con job build immagine — Fase 5
+- [x] `chore(k8s): add base Kustomize manifests` — Fase 6: namespace, postgres (StatefulSet+PVC+Service), app (Deployment+Service), migration Job
+- [x] `chore(k8s): add dev/prod overlays with secret generator` + estendo CI con validazione `kubectl kustomize build` — Fase 6
+- [x] `docs: add architecture README and portfolio polish` — Fase 8
 
 Il primo commit crea anche il repository Git locale (`git init`). Il repo remoto
 `LorenzoPerrella/ticker-vault` esiste già su GitHub (pubblico, vuoto): dopo il primo
@@ -108,5 +108,10 @@ segnalato dopo averlo eseguito.
 
 - `uv run pytest tests/unit` — unit test
 - `uv run pytest tests/integration` — integration test (richiede Docker)
-- `uv run ruff check .` / `uv run mypy src` — lint/type-check
-- Push su GitHub → verifica che il workflow Actions passi
+- `uv run ruff check .` / `uv run ruff format --check .` / `uv run mypy` — lint/type-check
+- `docker build -t price-service:local .` — build immagine
+- `kubectl kustomize k8s/overlays/{dev,prod}` — validazione manifest (richiede un `.env.secret` per overlay)
+- Push su GitHub → CI a 5 job (lint-and-typecheck, unit-tests, integration-tests, build-image, validate-k8s-manifests)
+
+Tutte le fasi completate e verificate; dettagli e trade-off consapevoli nel
+[`README`](README.md).
