@@ -20,8 +20,11 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # La connection string non è hardcoded in alembic.ini: viene letta dalla stessa
-# Settings usata a runtime dall'app (env / .env.secret), unica fonte di verità.
-config.set_main_option("sqlalchemy.url", get_settings().database_url)
+# Settings usata a runtime dall'app (env / .env.secret), unica fonte di verità
+# — a meno che sia già stata impostata a monte (es. dai test di integrazione,
+# per puntare a un Postgres in un container testcontainers).
+if not config.get_main_option("sqlalchemy.url"):
+    config.set_main_option("sqlalchemy.url", get_settings().database_url)
 
 target_metadata = Base.metadata
 
