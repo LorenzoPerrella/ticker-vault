@@ -17,7 +17,8 @@ containerizzato e orchestrato su **Kubernetes** (Kustomize, cluster locale via `
 - [x] CI GitHub Actions (lint + type-check)
 - [x] Modelli dati e migrazioni Alembic
 - [x] API CRUD `/api/v1/prices` (+ `/health`, `/ready`)
-- [ ] Test unitari e di integrazione
+- [x] Test unitari (repository e API, mockati)
+- [ ] Test di integrazione (testcontainers)
 - [ ] Containerizzazione (Dockerfile, docker-compose)
 - [ ] Manifest Kubernetes (Kustomize, overlay dev/prod)
 - [ ] Documentazione architetturale completa
@@ -31,6 +32,7 @@ uv sync              # crea il virtualenv e installa le dipendenze
 uv run ruff check .  # lint
 uv run mypy          # type-check
 uv run pre-commit install  # (opzionale) hook pre-commit locali
+uv run pytest tests/unit  # unit test (nessun DB richiesto)
 ```
 
 ### Database
