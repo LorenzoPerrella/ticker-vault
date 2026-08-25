@@ -1,3 +1,12 @@
+x-app-env: &app-env
+  # POSTGRES_HOST/PORT puntano al servizio Docker Compose `postgres`, non a
+  # localhost/5432 come nel dev loop non containerizzato (vedi README).
+  POSTGRES_USER: ${POSTGRES_USER:-price_service}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-price_service_dev_password}
+  POSTGRES_DB: ${POSTGRES_DB:-price_service}
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: 5432
+
 services:
   postgres:
     image: postgres:17
@@ -19,6 +28,29 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  # Le migrazioni girano come step a sé, mai dal pod/container app — stesso
+  # principio del Job k8s dedicato di Fase 6, qui replicato con un servizio
+  # one-shot che l'app aspetta prima di partire.
+  migrate:
+    build: .
+    image: price-service:local
+    command: ["alembic", "upgrade", "head"]
+    environment: *app-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  app:
+    build: .
+    image: price-service:local
+    restart: unless-stopped
+    environment: *app-env
+    ports:
+      - "8000:8000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
 
 volumes:
   postgres_data:

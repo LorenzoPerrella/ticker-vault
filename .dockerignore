@@ -1,0 +1,13 @@
+.venv/
+.git/
+.github/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+__pycache__/
+*.pyc
+.env
+.env.secret
+k8s/
+plan.md
+README.md

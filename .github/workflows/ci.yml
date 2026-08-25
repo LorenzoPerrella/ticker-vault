@@ -57,3 +57,22 @@ jobs:
 
       - name: Run integration tests
         run: uv run pytest tests/integration -v
+
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build image
+        run: docker build -t price-service:ci .
+
+      - name: Smoke test image (avvio + /health)
+        run: |
+          docker run -d --name smoke -p 8000:8000 price-service:ci
+          for _ in $(seq 1 20); do
+            curl -sf http://localhost:8000/health && break
+            sleep 1
+          done
+          curl -sf http://localhost:8000/health
+          docker logs smoke
+          docker rm -f smoke

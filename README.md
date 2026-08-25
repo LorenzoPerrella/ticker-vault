@@ -19,7 +19,7 @@ containerizzato e orchestrato su **Kubernetes** (Kustomize, cluster locale via `
 - [x] API CRUD `/api/v1/prices` (+ `/health`, `/ready`)
 - [x] Test unitari (repository e API, mockati)
 - [x] Test di integrazione (testcontainers)
-- [ ] Containerizzazione (Dockerfile, docker-compose)
+- [x] Containerizzazione (Dockerfile, docker-compose)
 - [ ] Manifest Kubernetes (Kustomize, overlay dev/prod)
 - [ ] Documentazione architetturale completa
 
@@ -54,6 +54,15 @@ uv run uvicorn price_service.main:app --reload
 
 → [http://localhost:8000/docs](http://localhost:8000/docs) (Swagger UI, `/api/v1/prices`).
 
-Istruzioni per le altre modalità di esecuzione (container, k8s locale)
-verranno aggiunte man mano che quelle fasi sono pronte — vedi
-[`plan.md`](plan.md) per i dettagli.
+### Avvio app (container buildato)
+
+```bash
+docker compose up --build
+```
+
+Costruisce l'immagine, avvia Postgres, esegue le migrazioni (servizio `migrate`,
+one-shot) e solo dopo avvia l'app — stessa API su
+[http://localhost:8000/docs](http://localhost:8000/docs), ma tutto containerizzato.
+
+Istruzioni per il deploy k8s locale verranno aggiunte man mano che quella fase
+è pronta — vedi [`plan.md`](plan.md) per i dettagli.
